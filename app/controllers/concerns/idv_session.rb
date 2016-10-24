@@ -45,6 +45,6 @@ module IdvSession
   def init_questions_and_profile(resolution)
     idv_session.resolution = resolution
     idv_session.question_number = 0
-    idv_session.profile_from_applicant(idv_session.applicant)
+    idv_session.profile_from_applicant(idv_session.applicant, password)
   end
 end
