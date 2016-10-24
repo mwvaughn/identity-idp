@@ -28,8 +28,7 @@ describe Profile do
 
   describe '#plain_pii' do
     it 'allows PII attribute assignment' do
-      profile.dob = '1920-01-01'
-      expect(profile.dob).to eq '1920-01-01'
+      profile.plain_pii.dob = '1920-01-01'
       expect(profile.plain_pii).to be_a Pii::Attributes
       expect(profile.plain_pii.dob).to eq('1920-01-01')
     end
@@ -53,8 +52,7 @@ describe Profile do
     it 'defaults to plain_pii' do
       expect(profile.encrypted_pii).to be_nil
 
-      profile.dob = '1920-01-01'
-      profile.encrypt_pii(password)
+      profile.encrypt_pii(password, pii)
 
       expect(profile.encrypted_pii).to_not be_nil
       expect(profile.encrypted_pii).to_not match '1920'
@@ -95,34 +93,34 @@ describe Profile do
   describe 'allows one unique SSN per user' do
     it 'allows multiple records per user if only one is active' do
       profile.active = true
-      profile.ssn = '1234'
+      profile.plain_pii[:ssn] = '1234'
       profile.encrypt_pii(password)
       profile.save!
       expect do
-        another_profile = build(:profile, ssn: '1234', user: user)
+        another_profile = build(:profile, pii: { ssn: '1234' }, user: user)
         another_profile.encrypt_pii(password)
         another_profile.save!
       end.to_not raise_error
     end
 
     it 'prevents save! via ActiveRecord uniqueness validation' do
-      profile = Profile.new(active: true, user: user, ssn: '1234')
-      profile.encrypt_pii(password)
+      profile = Profile.new(active: true, user: user)
+      profile.encrypt_pii(password, pii)
       profile.save!
       expect do
-        another_profile = Profile.new(active: true, user: another_user, ssn: '1234')
-        another_profile.encrypt_pii(password)
+        another_profile = Profile.new(active: true, user: another_user)
+        another_profile.encrypt_pii(password, pii)
         another_profile.save!
       end.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it 'prevents save! via psql unique partial index' do
-      profile = Profile.new(active: true, user: user, ssn: '1234')
-      profile.encrypt_pii(password)
+      profile = Profile.new(active: true, user: user)
+      profile.encrypt_pii(password, pii)
       profile.save!
       expect do
-        another_profile = Profile.new(active: true, user: another_user, ssn: '1234')
-        another_profile.encrypt_pii(password)
+        another_profile = Profile.new(active: true, user: another_user)
+        another_profile.encrypt_pii(password, pii)
         another_profile.save!(validate: false)
       end.to raise_error(ActiveRecord::RecordNotUnique)
     end

@@ -3,9 +3,9 @@ require 'rails_helper'
 describe Pii::Cacher do
   let(:password) { 'salty peanuts are best' }
   let(:user) { create(:user, password: password) }
-  let(:profile) { build(:profile, :active, :verified, user: user, ssn: '1234') }
+  let(:profile) { build(:profile, :active, :verified, user: user, pii: { ssn: '1234' }) }
   let(:diff_user) { create(:user, password: password) }
-  let(:diff_profile) { build(:profile, :active, :verified, user: diff_user, ssn: '5678') }
+  let(:diff_profile) { build(:profile, :active, :verified, user: diff_user, pii: { ssn: '5678' }) }
   let(:user_session) { {} }
 
   subject { described_class.new(user, user_session) }

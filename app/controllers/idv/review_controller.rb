@@ -78,7 +78,7 @@ module Idv
     end
 
     def password
-      params.require(:user)[:password]
+      params.fetch(:user, {})[:password].presence
     end
 
     def valid_password?

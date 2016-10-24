@@ -12,19 +12,26 @@ module Idv
     validate :ssn_is_unique, :dob_is_sane
 
     delegate :user_id, :first_name, :last_name, :phone, :email, :dob, :ssn, :address1,
-             :address2, :city, :state, :zipcode, to: :profile
+             :address2, :city, :state, :zipcode, to: :pii_attributes
 
     def initialize(params, user)
       @user = user
-      profile.attributes = params.select { |key, _val| respond_to?(key.to_sym) }
+      params.each do |key, value|
+        next unless Pii::Attributes.members.include?(key.to_sym)
+        pii_attributes[key] = value
+      end
     end
 
     def profile
       @profile ||= Profile.new
     end
 
+    def pii_attributes
+      profile.plain_pii
+    end
+
     def submit(params)
-      profile.assign_attributes(params)
+      params.each { |key, val| pii_attributes[key] = val }
       profile.ssn_signature = ssn_signature
       valid?
     end

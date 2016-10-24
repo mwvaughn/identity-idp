@@ -31,6 +31,8 @@ class AttributeAsserter
 
   private
 
+  attr_reader :decrypted_pii
+
   def default_attrs
     {
       uuid: {
@@ -53,7 +55,7 @@ class AttributeAsserter
   end
 
   def attribute_getter_function(attr)
-    -> (_principal) { @decrypted_pii[attr] }
+    -> (_principal) { decrypted_pii[attr] }
   end
 
   def add_email(attrs)

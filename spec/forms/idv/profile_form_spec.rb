@@ -61,7 +61,7 @@ describe Idv::ProfileForm do
     context 'when ssn is already taken by another profile' do
       it 'is invalid' do
         diff_user = create(:user)
-        profile = build(:profile, ssn: '1234', user: diff_user)
+        profile = build(:profile, pii: { ssn: '1234' }, user: diff_user)
         profile.encrypt_pii('sekrit')
         profile.save!
 
@@ -72,7 +72,7 @@ describe Idv::ProfileForm do
 
     context 'when ssn is already taken by same profile' do
       it 'is valid' do
-        profile = build(:profile, ssn: '1234', user: user)
+        profile = build(:profile, pii: { ssn: '1234' }, user: user)
         profile.encrypt_pii('sekrit')
         profile.save!
 

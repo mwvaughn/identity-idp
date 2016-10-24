@@ -72,6 +72,10 @@ Rails/TimeZone:
     - strict
     - flexible
 
+Rails/OutputSafety:
+  Exclude:
+  - lib/i18n_override.rb
+
 Style/AlignParameters:
   # Alignment of parameters in multi-line method calls.
   #

@@ -35,21 +35,6 @@ class Profile < ActiveRecord::Base
     self.encrypted_pii = pii.encrypted(password, salt)
   end
 
-  def method_missing(method_sym, *arguments, &block)
-    attr_name_sym = method_sym.to_s.gsub(/=\z/, '').to_sym
-    if plain_pii.members.include?(attr_name_sym)
-      return plain_pii[attr_name_sym] if arguments.empty?
-      plain_pii[attr_name_sym] = arguments.first
-    else
-      super
-    end
-  end
-
-  def respond_to_missing?(method_sym, include_private)
-    attr_name_sym = method_sym.to_s.gsub(/=\z/, '').to_sym
-    plain_pii.members.include?(attr_name_sym) || super
-  end
-
   private
 
   def salt
