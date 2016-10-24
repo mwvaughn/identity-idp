@@ -15,9 +15,7 @@ FactoryGirl.define do
     end
 
     after(:build) do |profile, evaluator|
-      if evaluator.pii
-        evaluator.pii.each { |key, val| profile.plain_pii[key] = val }
-      end
+      (evaluator.pii || {}).each { |key, val| profile.plain_pii[key] = val }
     end
   end
 end
