@@ -7,7 +7,7 @@ module Pii
 
     def save(password, profile = user.active_profile)
       return unless profile
-      user_session[:encrypted_pii] = re_encrypt(profile)
+      user_session[:encrypted_pii] = re_encrypt(profile, password)
     end
 
     def fetch
@@ -25,7 +25,7 @@ module Pii
       Pii::Encryptor.new
     end
 
-    def re_encrypt(profile)
+    def re_encrypt(profile, password)
       decrypted_pii = profile.decrypt_pii(password)
       pii_json = decrypted_pii.to_json
       encryptor.encrypt(pii_json)
