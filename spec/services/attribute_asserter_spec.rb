@@ -32,7 +32,12 @@ describe AttributeAsserter do
   describe '#build' do
     context 'verified user and LOA3 request' do
       let(:subject) do
-        described_class.new(user, service_provider, loa3_authn_request, decrypted_pii)
+        described_class.new(
+          user: user,
+          service_provider: service_provider,
+          authn_request: loa3_authn_request,
+          decrypted_pii: decrypted_pii
+        )
       end
 
       context 'custom bundle includes email, phone, and first_name' do
@@ -111,7 +116,12 @@ describe AttributeAsserter do
 
     context 'verified user and LOA1 request' do
       let(:subject) do
-        described_class.new(user, service_provider, loa1_authn_request, decrypted_pii)
+        described_class.new(
+          user: user,
+          service_provider: service_provider,
+          authn_request: loa1_authn_request,
+          decrypted_pii: decrypted_pii
+        )
       end
 
       context 'custom bundle includes email, phone, and first_name' do
@@ -216,7 +226,12 @@ describe AttributeAsserter do
 
     context 'unverified user and LOA3 request' do
       let(:subject) do
-        described_class.new(loa1_user, service_provider, loa3_authn_request, decrypted_pii)
+        described_class.new(
+          user: loa1_user,
+          service_provider: service_provider,
+          authn_request: loa3_authn_request,
+          decrypted_pii: decrypted_pii
+        )
       end
 
       it_behaves_like 'unverified user'
@@ -224,7 +239,12 @@ describe AttributeAsserter do
 
     context 'unverified user and LOA1 request' do
       let(:subject) do
-        described_class.new(loa1_user, service_provider, loa1_authn_request, decrypted_pii)
+        described_class.new(
+          user: loa1_user,
+          service_provider: service_provider,
+          authn_request: loa1_authn_request,
+          decrypted_pii: decrypted_pii
+        )
       end
 
       it_behaves_like 'unverified user'

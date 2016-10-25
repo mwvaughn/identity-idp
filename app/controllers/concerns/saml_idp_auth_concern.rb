@@ -73,7 +73,12 @@ module SamlIdpAuthConcern
   end
 
   def attribute_asserter(principal)
-    AttributeAsserter.new(principal, current_service_provider, saml_request, decrypted_pii)
+    AttributeAsserter.new(
+      user: principal,
+      service_provider: current_service_provider,
+      authn_request: saml_request,
+      decrypted_pii: decrypted_pii
+    )
   end
 
   def decrypted_pii

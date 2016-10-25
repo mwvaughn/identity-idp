@@ -13,11 +13,10 @@ class AttributeAsserter
     :phone
   ].freeze
 
-  def initialize(user, service_provider, authn_request, decrypted_pii)
-    @user = user
-    @service_provider = service_provider
-    @authn_request = authn_request
-    @decrypted_pii = decrypted_pii
+  URI_PATTERN = Saml::Idp::Constants::REQUESTED_ATTRIBUTES_CLASSREF
+
+  def initialize(options)
+    @options = options
   end
 
   def build
@@ -29,7 +28,23 @@ class AttributeAsserter
 
   private
 
-  attr_reader :decrypted_pii, :user, :service_provider, :authn_request
+  attr_reader :options
+
+  def decrypted_pii
+    options[:decrypted_pii]
+  end
+
+  def user
+    options[:user]
+  end
+
+  def service_provider
+    options[:service_provider]
+  end
+
+  def authn_request
+    options[:authn_request]
+  end
 
   def default_attrs
     {
@@ -70,13 +85,9 @@ class AttributeAsserter
     ).map(&:to_sym)
   end
 
-  def uri_pattern
-    Saml::Idp::Constants::REQUESTED_ATTRIBUTES_CLASSREF
-  end
-
   def authn_request_bundle
     return unless authn_context_attr_nodes.any?
-    authn_context_attr_nodes.join(':').gsub(uri_pattern, '').split(/\W+/).compact.uniq
+    authn_context_attr_nodes.join(':').gsub(URI_PATTERN, '').split(/\W+/).compact.uniq
   end
 
   def authn_context_attr_nodes
@@ -87,16 +98,12 @@ class AttributeAsserter
         samlp: Saml::XML::Namespaces::PROTOCOL,
         saml: Saml::XML::Namespaces::ASSERTION
       ).select do |node|
-        node.content =~ /#{Regexp.escape(uri_pattern)}/
+        node.content =~ /#{Regexp.escape(URI_PATTERN)}/
       end
     end
   end
 
   def loa3_authn_context?
-    authn_context == Saml::Idp::Constants::LOA3_AUTHN_CONTEXT_CLASSREF
-  end
-
-  def authn_context
-    authn_request.requested_authn_context
+    authn_request.requested_authn_context == Saml::Idp::Constants::LOA3_AUTHN_CONTEXT_CLASSREF
   end
 end
