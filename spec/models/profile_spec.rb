@@ -77,7 +77,7 @@ describe Profile do
       profile.save!
       expect do
         user.password = password
-        another_profile = create(:profile, pii: { ssn: '1234' }, user: user)
+        create(:profile, pii: { ssn: '1234' }, user: user)
       end.to_not raise_error
     end
 
