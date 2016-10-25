@@ -7,13 +7,6 @@ class Profile < ActiveRecord::Base
   scope :active, -> { where(active: true) }
   scope :verified, -> { where.not(verified_at: nil) }
 
-  def self.create_with_encrypted_pii(user, plain_pii, password)
-    profile = new(user: user)
-    profile.encrypt_pii(password, plain_pii)
-    profile.save!
-    profile
-  end
-
   def activate
     transaction do
       Profile.where('user_id=?', user_id).update_all(active: false)

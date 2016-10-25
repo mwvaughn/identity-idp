@@ -16,16 +16,6 @@ describe Profile do
 
   it { is_expected.to belong_to(:user) }
 
-  describe '#create_with_encrypted_pii' do
-    it 'creates Profile with encrypted PII' do
-      profile = described_class.create_with_encrypted_pii(user, pii, password)
-
-      expect(profile.persisted?).to eq true
-      expect(profile.encrypted_pii).to_not be_nil
-      expect(profile.encrypted_pii).to_not match 'Jane'
-    end
-  end
-
   describe '#encrypt_pii' do
     it 'encrypts PII' do
       expect(profile.encrypted_pii).to be_nil

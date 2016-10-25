@@ -1,6 +1,4 @@
 class AttributeAsserter
-  attr_accessor :user, :service_provider, :authn_request
-
   VALID_ATTRIBUTES = [
     :first_name,
     :middle_name,
@@ -16,9 +14,9 @@ class AttributeAsserter
   ].freeze
 
   def initialize(user, service_provider, authn_request, decrypted_pii)
-    self.user = user
-    self.service_provider = service_provider
-    self.authn_request = authn_request
+    @user = user
+    @service_provider = service_provider
+    @authn_request = authn_request
     @decrypted_pii = decrypted_pii
   end
 
@@ -31,7 +29,7 @@ class AttributeAsserter
 
   private
 
-  attr_reader :decrypted_pii
+  attr_reader :decrypted_pii, :user, :service_provider, :authn_request
 
   def default_attrs
     {

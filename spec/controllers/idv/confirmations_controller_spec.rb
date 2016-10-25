@@ -11,7 +11,7 @@ describe Idv::ConfirmationsController do
   let(:applicant) { Proofer::Applicant.new first_name: 'Some', last_name: 'One' }
   let(:agent) { Proofer::Agent.new vendor: :mock }
   let(:resolution) { agent.start applicant }
-  let(:profile) { Idv::Applicant.new(applicant, user, password).profile }
+  let(:profile) { Idv::ProfileFromApplicant.create(applicant, user, password) }
 
   describe 'before_actions' do
     it 'includes before_actions from AccountStateChecker' do

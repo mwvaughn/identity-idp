@@ -1,16 +1,18 @@
 module Idv
-  class Applicant
+  class ProfileFromApplicant
     attr_reader :profile
 
-    def initialize(applicant, user, password)
-      @profile = build_profile(applicant, user, password)
+    def self.create(applicant, user, password)
+      profile = Profile.new(user: user)
+      plain_pii = pii_from_applicant(applicant)
+      profile.encrypt_pii(password, plain_pii)
+      profile.save!
+      profile
     end
-
-    private
 
     # rubocop:disable MethodLength
     # This method is single statement spread across many lines for readability
-    def pii_from_applicant(applicant)
+    def self.pii_from_applicant(applicant)
       Pii::Attributes.new_from_hash(
         first_name: applicant.first_name,
         middle_name: applicant.middle_name,
@@ -26,9 +28,6 @@ module Idv
       )
     end
     # rubocop:enable MethodLength
-
-    def build_profile(applicant, user, password)
-      Profile.create_with_encrypted_pii(user, pii_from_applicant(applicant), password)
-    end
+    private_class_method :pii_from_applicant
   end
 end

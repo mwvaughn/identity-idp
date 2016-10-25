@@ -4,6 +4,6 @@ class ProfileController < ApplicationController
 
   def index
     cacher = Pii::Cacher.new(current_user, user_session)
-    @active_profile = cacher.fetch
+    @decrypted_pii = cacher.fetch
   end
 end

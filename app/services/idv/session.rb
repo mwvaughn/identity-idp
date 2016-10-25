@@ -32,7 +32,7 @@ module Idv
     end
 
     def profile_from_applicant(applicant, password)
-      profile = Idv::Applicant.new(applicant, current_user, password).profile
+      profile = Idv::ProfileFromApplicant.create(applicant, current_user, password)
       self.profile_id = profile.id
       cache_encrypted_pii(password)
       profile
