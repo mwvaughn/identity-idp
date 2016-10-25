@@ -55,8 +55,7 @@ module Idv
       profile.verified_at = Time.zone.now
       profile.vendor = vendor
       profile.activate
-      # move from temp slot to 'permanent' slot
-      user_session[:encrypted_pii] = session.delete(:encrypted_pii)
+      move_pii_to_user_session
     end
 
     def alive?
@@ -71,6 +70,10 @@ module Idv
     private
 
     attr_accessor :user_session, :current_user
+
+    def move_pii_to_user_session
+      user_session[:encrypted_pii] = session.delete(:encrypted_pii)
+    end
 
     def session
       user_session[:idv]
