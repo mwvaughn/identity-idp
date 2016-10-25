@@ -15,7 +15,10 @@ FactoryGirl.define do
     end
 
     after(:build) do |profile, evaluator|
-      (evaluator.pii || {}).each { |key, val| profile.plain_pii[key] = val }
+      if evaluator.pii
+        pii_attrs = Pii::Attributes.new_from_hash(evaluator.pii)
+        profile.encrypt_pii(profile.user.password, pii_attrs)
+      end
     end
   end
 end

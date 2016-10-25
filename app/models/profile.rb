@@ -21,15 +21,11 @@ class Profile < ActiveRecord::Base
     end
   end
 
-  def plain_pii
-    @_plain_pii ||= Pii::Attributes.new
-  end
-
   def decrypt_pii(password)
     Pii::Attributes.new_from_encrypted(encrypted_pii, password, salt)
   end
 
-  def encrypt_pii(password, pii = plain_pii)
+  def encrypt_pii(password, pii)
     ssn = pii.ssn
     self.ssn_signature = Pii::Fingerprinter.fingerprint(ssn) if ssn
     self.encrypted_pii = pii.encrypted(password, salt)

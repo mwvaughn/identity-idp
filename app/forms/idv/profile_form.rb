@@ -27,7 +27,7 @@ module Idv
     end
 
     def pii_attributes
-      profile.plain_pii
+      @_pii_attributes ||= Pii::Attributes.new
     end
 
     def submit(params)

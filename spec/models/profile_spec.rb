@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Profile do
-  let(:user) { create(:user, :signed_up) }
+  let(:user) { create(:user, :signed_up, password: password) }
   let(:another_user) { create(:user, :signed_up) }
   let(:profile) { create(:profile, user: user) }
   let(:pii) do
@@ -12,7 +12,7 @@ describe Profile do
       last_name: 'Doe'
     )
   end
-  let(:password) { 'sekrit' }
+  let(:password) { 'a really long sekrit' }
 
   it { is_expected.to belong_to(:user) }
 
@@ -26,18 +26,6 @@ describe Profile do
     end
   end
 
-  describe '#plain_pii' do
-    it 'allows PII attribute assignment' do
-      profile.plain_pii.dob = '1920-01-01'
-      expect(profile.plain_pii).to be_a Pii::Attributes
-      expect(profile.plain_pii.dob).to eq('1920-01-01')
-    end
-
-    it 'disallows invalid PII attribute assignment' do
-      expect { profile.foo = 'bar' }.to raise_error NoMethodError
-    end
-  end
-
   describe '#encrypt_pii' do
     it 'encrypts PII' do
       expect(profile.encrypted_pii).to be_nil
@@ -47,15 +35,6 @@ describe Profile do
       expect(profile.encrypted_pii).to_not be_nil
       expect(profile.encrypted_pii).to_not match 'Jane'
       expect(profile.encrypted_pii).to_not match '666'
-    end
-
-    it 'defaults to plain_pii' do
-      expect(profile.encrypted_pii).to be_nil
-
-      profile.encrypt_pii(password, pii)
-
-      expect(profile.encrypted_pii).to_not be_nil
-      expect(profile.encrypted_pii).to_not match '1920'
     end
   end
 
@@ -93,13 +72,12 @@ describe Profile do
   describe 'allows one unique SSN per user' do
     it 'allows multiple records per user if only one is active' do
       profile.active = true
-      profile.plain_pii[:ssn] = '1234'
-      profile.encrypt_pii(password)
+      pii_attrs = Pii::Attributes.new_from_hash(ssn: '1234')
+      profile.encrypt_pii(password, pii_attrs)
       profile.save!
       expect do
-        another_profile = build(:profile, pii: { ssn: '1234' }, user: user)
-        another_profile.encrypt_pii(password)
-        another_profile.save!
+        user.password = password
+        another_profile = create(:profile, pii: { ssn: '1234' }, user: user)
       end.to_not raise_error
     end
 

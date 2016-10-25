@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe Idv::ProfileForm do
-  let(:user) { create(:user) }
+  let(:password) { 'a really long sekrit' }
+  let(:user) { create(:user, password: password) }
   let(:subject) { Idv::ProfileForm.new({}, user) }
   let(:profile_attrs) do
     {
@@ -61,9 +62,7 @@ describe Idv::ProfileForm do
     context 'when ssn is already taken by another profile' do
       it 'is invalid' do
         diff_user = create(:user)
-        profile = build(:profile, pii: { ssn: '1234' }, user: diff_user)
-        profile.encrypt_pii('sekrit')
-        profile.save!
+        profile = create(:profile, pii: { ssn: '1234' }, user: diff_user)
 
         expect(subject.submit(profile_attrs.merge(ssn: '1234'))).to eq false
         expect(subject.errors[:ssn]).to eq [t('idv.errors.duplicate_ssn')]
@@ -72,9 +71,7 @@ describe Idv::ProfileForm do
 
     context 'when ssn is already taken by same profile' do
       it 'is valid' do
-        profile = build(:profile, pii: { ssn: '1234' }, user: user)
-        profile.encrypt_pii('sekrit')
-        profile.save!
+        profile = create(:profile, pii: { ssn: '1234' }, user: user)
 
         expect(subject.submit(profile_attrs.merge(ssn: '1234'))).to eq true
       end

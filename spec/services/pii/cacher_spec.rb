@@ -12,7 +12,6 @@ describe Pii::Cacher do
 
   describe '#save' do
     before do
-      profile.encrypt_pii(password)
       profile.save!
     end
 
@@ -25,7 +24,6 @@ describe Pii::Cacher do
     end
 
     it 'allows specific profile to be re-encrypted' do
-      diff_profile.encrypt_pii(password)
       diff_profile.save!
       server_encrypted_pii = subject.save(password, diff_profile)
 
@@ -38,7 +36,6 @@ describe Pii::Cacher do
 
   describe '#fetch' do
     before do
-      profile.encrypt_pii(password)
       profile.save!
     end
 
@@ -51,7 +48,6 @@ describe Pii::Cacher do
     end
 
     it 'allows specific profile to be decrypted' do
-      diff_profile.encrypt_pii(password)
       diff_profile.save!
       subject.save(password, diff_profile)
       decrypted_pii = subject.fetch
